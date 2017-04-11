@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Imagestream Experiment</title>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous" />
+		<link rel="stylesheet" href="theme.css">
+		<script src="https://code.jquery.com/jquery-3.2.1.min.js" crossorigin="anonymous"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+		<script src="util.js"></script>
+		<script src="imagestream.js"></script>
+	</head>
+	<body>
+		<div class="container">
+			<div id="qualInstructions" class="stageDiv">
+				<strong>Instructions:</strong>
+				<ul>
+					<li>A series of images will be rapidly shown to you after you click 'Start'.</li>
+					<li>After clicking 'Start', press spacebar whenever you <b>see a dog</b>.</li>
+					<li>The images will go be really fast so be prepared.</li>
+					<li>We understand that you will not be able to react on time for all the correct images. So try to do the best you can.</li>
+					<li>This initial task is a warm-up, with two purposes: for you to get familiar with the framework, and for our model to understand your typical reaction time.</li>
+				</ul>
+				<button type="button" class="btn btn-success startBtn qualStart">Start</button>
+			</div>
+			<div id="rapidInstructions" class="stageDiv" style="display:none">
+				<strong>Instructions:</strong>
+				<ul>
+					<li>A series of images will be rapidly shown to you after you click 'Start'.</li>
+					<li>After clicking 'Start', press spacebar whenever you <b>see a dog</b>.</li>
+					<li>The images will go be really fast so be prepared.</li>
+					<li>We understand that you will not be able to react on time for all the correct images. So try to do the best you can.</li>
+				</ul>
+				<button type="button" class="btn btn-success startBtn taskStart">Start</button>
+			</div>
+			<div id="conventionalInstructions" class="stageDiv" style="display:none">
+				<strong>Instructions:</strong>
+				<ul>
+					<li>This task differs from the warm-up task. Instead of a rapid stream of images, you will be shown one image at a time.</li>
+					<li>On each image, click 'Dog' if you see a dog or 'Other' otherwise. You can also press 'd' if you see a dog or 'o' otherwise on the keyboard.</li>
+					<li>This task is meant to emulate crowd workers, so try to go as quickly as possible while retaining high accuracy.</li>
+				</ul>
+				<button type="button" class="btn btn-success startBtn taskStart">Start</button>
+			</div>
+			<div id="rapidTask" class="stageDiv" style="display:none">
+				<div class="mainImageDiv">
+					<img id="rapidMainImage" class="mainImage" src="images/blank.png" height="400px" width="500px" />
+				</div>
+				<div id="rapidSelectedImageDiv">
+				</div>
+			</div>
+			<div id="conventionalTask" class="stageDiv" style="display:none">
+				<div class="mainImageDiv">
+					<img id="conventionalMainImage" class="mainImage" src="images/blank.png" height="400px" width="500px" />
+				</div>
+				<div id="conventionalBtnDiv">
+					<button type="button" class="btn btn-primary selectBtn conventionalBtn" data-label="true">Dog</button>
+					<button type="button" class="btn btn-primary selectBtn conventionalBtn" data-label="false">Other</button>
+				</div>
+			</div>
+			<div id="finishTask" class="stageDiv" style="display:none">
+				<strong>This task is over!</strong>
+			</div>
+			<div id="endInstructions" class="stageDiv" style="display:none">
+				<strong>The experiment is over. Thank you for your time!</strong>
+			</div>
+		</div>
+	</body>
+</html>

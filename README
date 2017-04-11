@@ -1,0 +1,54 @@
+This is an implementation of the experiment in "Embracing Error to Enable Rapid
+Crowdsourcing" [1].
+
+To compile:
+
+	go build imagestream.go
+
+Initialize the MySQL database:
+
+	mysql> CREATE DATABASE imagestream;
+	mysql> use imagestream;
+	mysql> source schema.sql;
+
+You will need to add qualification and experimental images to
+static/images/qual and static/images/data. The filenames of the images in both
+sets must be in the format "[numeric ID].png", e.g. "100.png". The
+qualification images need to start from 0.png and go up to 200.png.
+
+Once the images are compiled, insert the experimental images into the database.
+For each image:
+
+	INSERT INTO images (id, is_in_class) VALUES (0, 1);
+
+Here, 'static/images/data/0.png' is in the class.
+
+To run an experiment, start by inserting a row into the experiments table:
+
+	INSERT INTO experiments (id, total_images) VALUES ('test', 100);
+
+The experiment must be initialized before it can be used. Initialization
+involves randomly selecting a set of experimental images and dividing those
+images up into tasks for users.
+
+	./imagestream -mode init -expid test
+
+You can now serve the experiment. The application will listen on
+127.0.0.1:8080.
+
+	./imagestream -mode serve -expid test
+
+You can navigate to http://127.0.0.1:8080 to run the experiment. Once all tasks
+are completed (check with SELECT COUNT(*) FROM tasks WHERE completed = 0), you
+can evaluate the performance of the conventional and rapid approaches. For the
+rapid approach, you will need to supply a threshold; only images that score
+above the threshold (where score is computed by summing the Gaussian
+probability distribution across the clicks of all users) will be predicted as
+being in the class.
+
+	./imagestream -mode eval -expid test -threshold 0.005
+
+[1] Krishna, Ranjay A., Kenji Hata, Stephanie Chen, Joshua Kravitz, David A.
+Shamma, Li Fei-Fei, and Michael S. Bernstein. "Embracing error to enable rapid
+crowdsourcing." In Proceedings of the 2016 CHI Conference on Human Factors in
+Computing Systems, pp. 3167-3179. ACM, 2016.
