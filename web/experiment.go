@@ -52,7 +52,7 @@ func startExperiment(w http.ResponseWriter, r *http.Request) {
 	DB.QueryRow("SELECT conventional_tasks_per_worker, rapid_tasks_per_worker FROM experiments WHERE id = ?", ExperimentID).Scan(&conventionalTasks, &rapidTasks)
 	getTasks := func(t string, l int) []Task {
 		var tasks []Task
-		rows := DB.Query("SELECT id, type FROM tasks WHERE experiment_id = ? AND type = ? AND (locked_until IS NULL OR locked_until < NOW()) ORDER BY RAND() LIMIT ?", ExperimentID, t, l)
+		rows := DB.Query("SELECT id, type FROM tasks WHERE experiment_id = ? AND type = ? AND (locked_until IS NULL OR locked_until < NOW()) AND completed = 0 ORDER BY RAND() LIMIT ?", ExperimentID, t, l)
 		for rows.Next() {
 			task := Task{WorkerID: workerID}
 			rows.Scan(&task.ID, &task.Type)
