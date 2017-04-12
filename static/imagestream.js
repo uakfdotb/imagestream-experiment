@@ -1,3 +1,20 @@
+/*
+Copyright 2017 Favyen Bastani <fbastani@perennate.com>
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 var QUALIFICATION_TASK_LENGTH = 200;
 var QUALIFICATION_POSITIVE_IMAGES = 25;
 var QUALIFICATION_MAX_CLICK_DELAY = 800;
@@ -31,7 +48,7 @@ function showStage(name) {
 function preloadTask(task, callback) {
 	// preloaded images will map from display index to an Image object
 	var preloadedImages = {};
-	
+
 	var finished = 0;
 	var total = 0;
 	var preloadOne = function(idx, path) {
@@ -72,7 +89,7 @@ function runRapidTask(task, preloadedImages, callback) {
 	var clickLog = [];
 	var displayLog = [];
 	var updateIntervalObj;
-	
+
 	// create handler to listen for spacebar presses
 	// on spacebar, we want to update clickLog and also display the last four images under rapidSelectedImageDiv
 	var pressHandler = function(e) {
@@ -80,7 +97,7 @@ function runRapidTask(task, preloadedImages, callback) {
 			return;
 		}
 		clickLog.push({'time': time() - startTime});
-		
+
 		$('#rapidSelectedImageDiv').children().remove();
 		for(var i = Math.max(0, displayLog.length - 4); i < displayLog.length; i++) {
 			var img = $('<img>').attr('src', preloadedImages[i].src)
@@ -88,7 +105,7 @@ function runRapidTask(task, preloadedImages, callback) {
 			                    .attr('height', '100px');
 			img.appendTo($('#rapidSelectedImageDiv'));
 		}
-		
+
 		// clear after one second, but only if the user hasn't clicked again
 		var clickID = clickLog.length;
 		setTimeout(function() {
@@ -98,7 +115,7 @@ function runRapidTask(task, preloadedImages, callback) {
 		}, 1000);
 	};
 	$('body').on('keydown', pressHandler);
-	
+
 	// finish function will be executed when we are done running through images
 	// here, we cleanup and then callback
 	var finish = function() {
@@ -112,7 +129,7 @@ function runRapidTask(task, preloadedImages, callback) {
 			callback(time() - startTime, displayLog, clickLog);
 		}, 1000);
 	};
-	
+
 	// function for timer to display the next image in sequence
 	var showNextImage = function() {
 		if(counter >= task.images.length) {
@@ -138,11 +155,11 @@ function runConventionalTask(task, preloadedImages, callback) {
 	var imageIndex = 0;
 	var labels = [];
 	var finish;
-	
+
 	var showImage = function() {
 		$('#conventionalMainImage').attr('src', preloadedImages[imageIndex].src);
 	};
-	
+
 	// setLabel is called whenever the user inputs a label
 	var setLabel = function(label) {
 		labels.push({
@@ -158,7 +175,7 @@ function runConventionalTask(task, preloadedImages, callback) {
 		showImage();
 		console.log(labels);
 	};
-	
+
 	// create handlers to listen for button/key presses
 	var buttonHandler = function(e) {
 		console.log($(this).data());
@@ -178,7 +195,7 @@ function runConventionalTask(task, preloadedImages, callback) {
 	};
 	$('.conventionalBtn').on('click', buttonHandler);
 	$('body').on('keydown', pressHandler);
-	
+
 	// finish function will be executed when we are done running through images
 	// here, we cleanup and then callback
 	var finish = function() {
@@ -190,7 +207,7 @@ function runConventionalTask(task, preloadedImages, callback) {
 			callback(time() - startTime, labels);
 		}, 1000);
 	};
-	
+
 	showImage();
 }
 
@@ -199,7 +216,7 @@ $(document).ready(function() {
 	var nextTaskPreloadedImages = null;
 	var qualMean = null;
 	var qualSigma = null;
-	
+
 	var nextTask = function() {
 		if(tasks.length > 0) {
 			showStage(tasks[0].type + 'Instructions');
@@ -214,7 +231,7 @@ $(document).ready(function() {
 			showStage('endInstructions');
 		}
 	};
-	
+
 	var fetchTasks = function() {
 		$.post('/start-experiment', function(data) {
 			data.forEach(function(task) {
@@ -227,7 +244,7 @@ $(document).ready(function() {
 			nextTask();
 		}, 'json');
 	};
-	
+
 	// preload qualification task
 	$('.qualStart').prop('disabled', true);
 	$('.qualStart').text('Start (loading...)');
@@ -237,7 +254,7 @@ $(document).ready(function() {
 		$('.qualStart').prop('disabled', false);
 		$('.qualStart').text('Start');
 	});
-	
+
 	$('.qualStart').click(function() {
 		runTask(qualTask, nextTaskPreloadedImages, function(duration, displayLog, clickLog) {
 			// compute precision and recall
@@ -265,7 +282,7 @@ $(document).ready(function() {
 					delaySamples.push(click.time - matchedWith.time);
 				}
 			});
-		
+
 			// compute mean/sigma from delaySamples
 			qualMean = getMean(delaySamples);
 			qualSigma = getStddev(delaySamples);
@@ -280,12 +297,12 @@ $(document).ready(function() {
 				showStage('endInstructions');
 				return;
 			}
-		
+
 			// grab tasks from server and begin
 			fetchTasks();
 		});
 	});
-	
+
 	$('.taskStart').click(function() {
 		var task = tasks.shift();
 		if(task.type == 'rapid') {
